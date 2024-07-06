@@ -1071,24 +1071,24 @@ function calculateAllImpairments() {
     const thumbHandImp = Math.round(totalThumbDigitImp * 0.4);
     totalHDImpairment += thumbHandImp;
 
-let thumbImpairments = [
-    { value: ipTotalImp, label: 'IP' },
-    { value: mpTotalImp, label: 'MP' },
-    { value: radialAbductionTotalImp, label: 'Radial Abduction' },
-    { value: cmcAdductionTotalImp, label: 'CMC Adduction' },
-    { value: oppositionTotalImp, label: 'Opposition' }
-].filter(imp => imp.value > 0);
+    let thumbImpairments = [
+        { value: ipTotalImp, label: 'IP' },
+        { value: mpTotalImp, label: 'MP' },
+        { value: radialAbductionTotalImp, label: 'Radial Abduction' },
+        { value: cmcAdductionTotalImp, label: 'CMC Adduction' },
+        { value: oppositionTotalImp, label: 'Opposition' }
+    ].filter(imp => imp.value > 0);
 
-thumbImpairments.sort((a, b) => b.value - a.value);
+    thumbImpairments.sort((a, b) => b.value - a.value);
 
-let additionString = thumbImpairments.map(imp => imp.value).join(' + ');
+    let additionString = thumbImpairments.map(imp => imp.value).join(' + ');
 
-if (additionString) {
-    document.getElementById('total-imp').textContent = 
-        `ADD: ${additionString} = ${totalThumbDigitImp} DT = ${thumbHandImp} HD`;
-} else {
-    document.getElementById('total-imp').textContent = 
-        `ADD: 0 DT = 0 HD`;
+    if (additionString) {
+        document.getElementById('total-imp').textContent = 
+            `ADD: ${additionString} = ${totalThumbDigitImp} DT = ${thumbHandImp} HD`;
+    } else {
+        document.getElementById('total-imp').textContent = 
+            `ADD: 0 DT = 0 HD`;
 }
 
     // Calculate total hand impairment
