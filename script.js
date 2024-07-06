@@ -1047,6 +1047,9 @@ function calculateAllImpairments() {
     let radialAbductionTotalImp = Math.max(radialAbductionImp, radialAbductionAnkylosisImp);
     document.getElementById('radial-abduction-imp').textContent = radialAbductionTotalImp;
 
+    console.log('Radial Abduction:', radialAbduction, radialAbductionImp);
+    console.log('Radial Abduction Ankylosis:', radialAbductionAnkylosis, radialAbductionAnkylosisImp);
+
     const cmcAdduction = document.getElementById('cmc-adduction').value;
     const cmcAdductionAnkylosis = document.getElementById('cmc-adduction-ankylosis').value;
 
@@ -1058,6 +1061,9 @@ function calculateAllImpairments() {
     let cmcAdductionTotalImp = Math.max(cmcAdductionImp, cmcAdductionAnkylosisImp);
     document.getElementById('cmc-adduction-imp').textContent = cmcAdductionTotalImp;
 
+    console.log('CMC Adduction:', cmcAdduction, cmcAdductionImp);
+    console.log('CMC Adduction Ankylosis:', cmcAdductionAnkylosis, cmcAdductionAnkylosisImp);
+
     const opposition = document.getElementById('opposition').value;
     const oppositionAnkylosis = document.getElementById('opposition-ankylosis').value;
 
@@ -1068,6 +1074,9 @@ function calculateAllImpairments() {
     document.getElementById('opposition-ankylosis-imp').textContent = oppositionAnkylosisImp;
     let oppositionTotalImp = Math.max(oppositionImp, oppositionAnkylosisImp);
     document.getElementById('opposition-imp').textContent = oppositionTotalImp;
+
+    console.log('Opposition:', opposition, oppositionImp);
+    console.log('Opposition Ankylosis:', oppositionAnkylosis, oppositionAnkylosisImp);
 
     const totalThumbDigitImp = ipTotalImp + mpTotalImp + radialAbductionTotalImp + cmcAdductionTotalImp + oppositionTotalImp;
     const thumbHandImp = Math.round(totalThumbDigitImp * 0.4);
