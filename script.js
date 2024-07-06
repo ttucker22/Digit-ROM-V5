@@ -885,6 +885,46 @@ function calculateThumbImpairment(value, dataArray, type) {
     return 0;
 }
 
+function clearAllInputs() {
+    // Clear all input fields
+    const allInputs = document.querySelectorAll('input[type="number"]');
+    allInputs.forEach(input => {
+        input.value = '';
+    });
+
+    // Reset all impairment displays
+    const allImpairments = document.querySelectorAll('.DIPFlexionImpairment, .DIPExtensionImpairment, .DIPAnkylosisImpairment, .DIPTotalImpairment, .PIPFlexionImpairment, .PIPExtensionImpairment, .PIPAnkylosisImpairment, .PIPTotalImpairment, .MPFlexionImpairment, .MPExtensionImpairment, .MPAnkylosisImpairment, .MPTotalImpairment');
+    allImpairments.forEach(imp => {
+        imp.textContent = '0';
+    });
+
+    // Reset CVC results
+    const cvcResults = document.querySelectorAll('.cvc-result');
+    cvcResults.forEach(cvc => {
+        cvc.textContent = 'CVC: 0 DT = 0 HD';
+    });
+
+    // Reset thumb impairments
+    const thumbImpairments = document.querySelectorAll('#ip-flexion-imp, #ip-extension-imp, #ip-ankylosis-imp, #ip-imp, #mp-flexion-imp, #mp-extension-imp, #mp-ankylosis-imp, #mp-imp, #radial-abduction-motion-imp, #radial-abduction-ankylosis-imp, #radial-abduction-imp, #cmc-adduction-motion-imp, #cmc-adduction-ankylosis-imp, #cmc-adduction-imp, #opposition-motion-imp, #opposition-ankylosis-imp, #opposition-imp');
+    thumbImpairments.forEach(imp => {
+        imp.textContent = '0';
+    });
+
+    // Reset thumb ADD result
+    document.getElementById('total-imp').textContent = 'ADD: 0 DT = 0 HD';
+
+    // Reset total impairment results
+    document.getElementById('total-hd-impairment').textContent = '0';
+    document.getElementById('total-ue-impairment').textContent = '0';
+    document.getElementById('total-wpi').textContent = '0';
+
+    // Recalculate all impairments to update any derived values
+    calculateAllImpairments();
+}
+
+// Add event listener to the Clear All button
+document.getElementById('clearAllButton').addEventListener('click', clearAllInputs);
+
 // Main calculation function
 function calculateAllImpairments() {
     let totalHDImpairment = 0;
