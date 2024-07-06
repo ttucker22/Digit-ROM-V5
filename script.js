@@ -853,37 +853,58 @@ function convertToHD(dt, fingerType) {
 
 // Thumb impairment calculation functions
 function calculateThumbImpairment(value, dataArray, type) {
+    console.log(`Calculating impairment for ${type} with value: ${value}`);
+    
     if (value === "" || isNaN(value)) {
+        console.log('Value is empty or not a number, returning 0');
         return 0;
     }
+    
     value = parseFloat(value);
     let row;
     
-    if (type === 'radialAbduction') {
-        row = dataArray.find(r => r.radialAbduction === value || 
-                                  (r.radialAbduction === `<${Math.ceil(value)}` && value < Math.ceil(value)) ||
-                                  (r.radialAbduction === `>${Math.floor(value)}` && value > Math.floor(value)));
+    if (type === 'radialAbduction' || type === 'ankylosis') {
+        row = dataArray.find(r => {
+            const match = r.radialAbduction === value || 
+                          (r.radialAbduction === `<${Math.ceil(value)}` && value < Math.ceil(value)) ||
+                          (r.radialAbduction === `>${Math.floor(value)}` && value > Math.floor(value));
+            if (match) console.log(`Matched row:`, r);
+            return match;
+        });
     } else if (type === 'cm') {
-        row = dataArray.find(r => r.cm === value || 
-                                  (r.cm === `<${Math.ceil(value)}` && value < Math.ceil(value)) ||
-                                  (r.cm === `>${Math.floor(value)}` && value > Math.floor(value)));
+        row = dataArray.find(r => {
+            const match = r.cm === value || 
+                          (r.cm === `<${Math.ceil(value)}` && value < Math.ceil(value)) ||
+                          (r.cm === `>${Math.floor(value)}` && value > Math.floor(value));
+            if (match) console.log(`Matched row:`, r);
+            return match;
+        });
     } else {
-        row = dataArray.find(r => r[type] === value || 
-                                  (r[type] === `<${Math.ceil(value)}` && value < Math.ceil(value)) ||
-                                  (r[type] === `>${Math.floor(value)}` && value > Math.floor(value)));
+        row = dataArray.find(r => {
+            const match = r[type] === value || 
+                          (r[type] === `<${Math.ceil(value)}` && value < Math.ceil(value)) ||
+                          (r[type] === `>${Math.floor(value)}` && value > Math.floor(value));
+            if (match) console.log(`Matched row:`, r);
+            return match;
+        });
     }
     
     if (row) {
-        if (type === 'radialAbduction') {
-            return row.dtAbnormalMotion || 0;
-        } else if (type === 'cm') {
-            return row.dtAbnormalMotion || 0;
+        let result;
+        if (type === 'radialAbduction' && !row.dtAbnormalMotion) {
+            result = row.dtAnkylosis || 0;
+        } else if (type === 'cm' && !row.dtAbnormalMotion) {
+            result = row.dtAnkylosis || 0;
         } else if (type === 'ankylosis') {
-            return row.dtAnkylosis || 0;
+            result = row.dtAnkylosis || 0;
         } else {
-            return row[`dt${type.charAt(0).toUpperCase() + type.slice(1)}`] || 0;
+            result = row[`dt${type.charAt(0).toUpperCase() + type.slice(1)}`] || 0;
         }
+        console.log(`Returning result: ${result}`);
+        return result;
     }
+    
+    console.log('No matching row found, returning 0');
     return 0;
 }
 
@@ -1047,9 +1068,6 @@ function calculateAllImpairments() {
     let radialAbductionTotalImp = Math.max(radialAbductionImp, radialAbductionAnkylosisImp);
     document.getElementById('radial-abduction-imp').textContent = radialAbductionTotalImp;
 
-    console.log('Radial Abduction:', radialAbduction, radialAbductionImp);
-    console.log('Radial Abduction Ankylosis:', radialAbductionAnkylosis, radialAbductionAnkylosisImp);
-
     const cmcAdduction = document.getElementById('cmc-adduction').value;
     const cmcAdductionAnkylosis = document.getElementById('cmc-adduction-ankylosis').value;
 
@@ -1060,9 +1078,6 @@ function calculateAllImpairments() {
     document.getElementById('cmc-adduction-ankylosis-imp').textContent = cmcAdductionAnkylosisImp;
     let cmcAdductionTotalImp = Math.max(cmcAdductionImp, cmcAdductionAnkylosisImp);
     document.getElementById('cmc-adduction-imp').textContent = cmcAdductionTotalImp;
-
-    console.log('CMC Adduction:', cmcAdduction, cmcAdductionImp);
-    console.log('CMC Adduction Ankylosis:', cmcAdductionAnkylosis, cmcAdductionAnkylosisImp);
 
     const opposition = document.getElementById('opposition').value;
     const oppositionAnkylosis = document.getElementById('opposition-ankylosis').value;
