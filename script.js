@@ -861,20 +861,22 @@ function calculateThumbImpairment(value, dataArray, type) {
     
     if (type === 'radialAbduction') {
         row = dataArray.find(r => r.radialAbduction === value || 
-                                  (r.radialAbduction === `>${Math.floor(value)}` && value > Math.floor(value)) ||
-                                  (r.radialAbduction === `<${Math.ceil(value)}` && value < Math.ceil(value)));
+                                  (r.radialAbduction === `<${Math.ceil(value)}` && value < Math.ceil(value)) ||
+                                  (r.radialAbduction === `>${Math.floor(value)}` && value > Math.floor(value)));
     } else if (type === 'cm') {
         row = dataArray.find(r => r.cm === value || 
-                                  (r.cm === `>${Math.floor(value)}` && value > Math.floor(value)) ||
-                                  (r.cm === `<${Math.ceil(value)}` && value < Math.ceil(value)));
+                                  (r.cm === `<${Math.ceil(value)}` && value < Math.ceil(value)) ||
+                                  (r.cm === `>${Math.floor(value)}` && value > Math.floor(value)));
     } else {
         row = dataArray.find(r => r[type] === value || 
-                                  (r[type] === `>${Math.floor(value)}` && value > Math.floor(value)) ||
-                                  (r[type] === `<${Math.ceil(value)}` && value < Math.ceil(value)));
+                                  (r[type] === `<${Math.ceil(value)}` && value < Math.ceil(value)) ||
+                                  (r[type] === `>${Math.floor(value)}` && value > Math.floor(value)));
     }
     
     if (row) {
-        if (type === 'radialAbduction' || type === 'cm') {
+        if (type === 'radialAbduction') {
+            return row.dtAbnormalMotion || 0;
+        } else if (type === 'cm') {
             return row.dtAbnormalMotion || 0;
         } else if (type === 'ankylosis') {
             return row.dtAnkylosis || 0;
