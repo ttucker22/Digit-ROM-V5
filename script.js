@@ -1100,9 +1100,10 @@ if (additionString) {
     document.getElementById('total-wpi').textContent = totalWPI;
 }
 
-// Add event listener to the calculate button
-document.getElementById('calculateButton').addEventListener('click', calculateAllImpairments);
+// Event listener for Clear All button
+document.getElementById('clearAllButton').addEventListener('click', clearAllInputs);
 
+// Maintain Auto-Calculation (place this at the end of your script)
 // Add event listeners to all input fields for real-time updates
 const inputFields = document.querySelectorAll('input[type="number"]');
 inputFields.forEach(input => {
