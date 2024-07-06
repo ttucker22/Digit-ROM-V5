@@ -853,58 +853,34 @@ function convertToHD(dt, fingerType) {
 
 // Thumb impairment calculation functions
 function calculateThumbImpairment(value, dataArray, type) {
-    console.log(`Calculating impairment for ${type} with value: ${value}`);
-    
     if (value === "" || isNaN(value)) {
-        console.log('Value is empty or not a number, returning 0');
         return 0;
     }
-    
     value = parseFloat(value);
     let row;
     
-    if (type === 'radialAbduction' || type === 'ankylosis') {
-        row = dataArray.find(r => {
-            const match = r.radialAbduction === value || 
-                          (r.radialAbduction === `<${Math.ceil(value)}` && value < Math.ceil(value)) ||
-                          (r.radialAbduction === `>${Math.floor(value)}` && value > Math.floor(value));
-            if (match) console.log(`Matched row:`, r);
-            return match;
-        });
-    } else if (type === 'cm') {
-        row = dataArray.find(r => {
-            const match = r.cm === value || 
-                          (r.cm === `<${Math.ceil(value)}` && value < Math.ceil(value)) ||
-                          (r.cm === `>${Math.floor(value)}` && value > Math.floor(value));
-            if (match) console.log(`Matched row:`, r);
-            return match;
-        });
+    if (type === 'radialAbduction' || type === 'cm') {
+        row = dataArray.find(r => r[type] === value) || 
+              dataArray.find(r => r[type] === `>${Math.abs(value)}`) ||
+              dataArray.find(r => r[type] === `<${Math.abs(value)}`);
+    } else if (type === 'ankylosis' && (dataArray === RADIALABDUCTIONData || dataArray === ADDUCTIONData || dataArray === OPPOSITIONData)) {
+        const lookupType = dataArray === RADIALABDUCTIONData ? 'radialAbduction' : 'cm';
+        row = dataArray.find(r => r[lookupType] === value) || 
+              dataArray.find(r => r[lookupType] === `>${Math.abs(value)}`) ||
+              dataArray.find(r => r[lookupType] === `<${Math.abs(value)}`);
     } else {
-        row = dataArray.find(r => {
-            const match = r[type] === value || 
-                          (r[type] === `<${Math.ceil(value)}` && value < Math.ceil(value)) ||
-                          (r[type] === `>${Math.floor(value)}` && value > Math.floor(value));
-            if (match) console.log(`Matched row:`, r);
-            return match;
-        });
+        row = dataArray.find(r => r[type] === value);
     }
     
     if (row) {
-        let result;
-        if (type === 'radialAbduction' && !row.dtAbnormalMotion) {
-            result = row.dtAnkylosis || 0;
-        } else if (type === 'cm' && !row.dtAbnormalMotion) {
-            result = row.dtAnkylosis || 0;
+        if (type === 'radialAbduction' || type === 'cm') {
+            return row.dtAbnormalMotion || 0;
         } else if (type === 'ankylosis') {
-            result = row.dtAnkylosis || 0;
+            return row.dtAnkylosis || 0;
         } else {
-            result = row[`dt${type.charAt(0).toUpperCase() + type.slice(1)}`] || 0;
+            return row[`dt${type.charAt(0).toUpperCase() + type.slice(1)}`] || 0;
         }
-        console.log(`Returning result: ${result}`);
-        return result;
     }
-    
-    console.log('No matching row found, returning 0');
     return 0;
 }
 
@@ -1032,11 +1008,11 @@ function calculateAllImpairments() {
     const ipFlexion = document.getElementById('ip-flexion').value;
     const ipExtension = document.getElementById('ip-extension').value;
     const ipAnkylosis = document.getElementById('ip-ankylosis').value;
-
+    
     let ipFlexionImp = calculateThumbImpairment(ipFlexion, IPData, 'flexion');
     let ipExtensionImp = calculateThumbImpairment(ipExtension, IPData, 'extension');
     let ipAnkylosisImp = calculateThumbImpairment(ipAnkylosis, IPData, 'ankylosis');
-
+    
     document.getElementById('ip-flexion-imp').textContent = ipFlexionImp;
     document.getElementById('ip-extension-imp').textContent = ipExtensionImp;
     document.getElementById('ip-ankylosis-imp').textContent = ipAnkylosisImp;
@@ -1046,11 +1022,11 @@ function calculateAllImpairments() {
     const mpFlexion = document.getElementById('mp-flexion').value;
     const mpExtension = document.getElementById('mp-extension').value;
     const mpAnkylosis = document.getElementById('mp-ankylosis').value;
-
+    
     let mpFlexionImp = calculateThumbImpairment(mpFlexion, THUMBMPData, 'flexion');
     let mpExtensionImp = calculateThumbImpairment(mpExtension, THUMBMPData, 'extension');
     let mpAnkylosisImp = calculateThumbImpairment(mpAnkylosis, THUMBMPData, 'ankylosis');
-
+    
     document.getElementById('mp-flexion-imp').textContent = mpFlexionImp;
     document.getElementById('mp-extension-imp').textContent = mpExtensionImp;
     document.getElementById('mp-ankylosis-imp').textContent = mpAnkylosisImp;
@@ -1090,9 +1066,6 @@ function calculateAllImpairments() {
     let oppositionTotalImp = Math.max(oppositionImp, oppositionAnkylosisImp);
     document.getElementById('opposition-imp').textContent = oppositionTotalImp;
 
-    console.log('Opposition:', opposition, oppositionImp);
-    console.log('Opposition Ankylosis:', oppositionAnkylosis, oppositionAnkylosisImp);
-
     const totalThumbDigitImp = ipTotalImp + mpTotalImp + radialAbductionTotalImp + cmcAdductionTotalImp + oppositionTotalImp;
     const thumbHandImp = Math.round(totalThumbDigitImp * 0.4);
     totalHDImpairment += thumbHandImp;
@@ -1110,13 +1083,13 @@ function calculateAllImpairments() {
     let additionString = thumbImpairments.map(imp => imp.value).join(' + ');
 
     if (additionString) {
-        document.getElementById('total-imp').textContent = 
+        document.getElementById('thumb-cvc-result').textContent = 
             `ADD: ${additionString} = ${totalThumbDigitImp} DT = ${thumbHandImp} HD`;
     } else {
-        document.getElementById('total-imp').textContent = 
+        document.getElementById('thumb-cvc-result').textContent = 
             `ADD: 0 DT = 0 HD`;
-}
-
+    }
+    
     // Calculate total hand impairment
     const totalUEImpairment = Math.round(totalHDImpairment * 0.9);
     const totalWPI = Math.round(totalUEImpairment * 0.6);
