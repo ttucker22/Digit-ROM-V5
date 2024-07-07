@@ -1083,10 +1083,10 @@ function calculateAllImpairments() {
     let additionString = thumbImpairments.map(imp => imp.value).join(' + ');
 
     if (additionString) {
-        document.getElementById('thumb-cvc-result').textContent = 
+        document.getElementById('total-imp').textContent = 
             `ADD: ${additionString} = ${totalThumbDigitImp} DT = ${thumbHandImp} HD`;
     } else {
-        document.getElementById('thumb-cvc-result').textContent = 
+        document.getElementById('total-imp').textContent = 
             `ADD: 0 DT = 0 HD`;
     }
     
